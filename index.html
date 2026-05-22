@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#007aff">
+    <title>Time Duration Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 25px 20px 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        /* DateTime Card Styles */
+        .datetime-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .datetime-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .card-title.start {
+            color: #34c759;
+        }
+        
+        .card-title.end {
+            color: #ff3b30;
+        }
+        
+        .datetime-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            font-family: inherit;
+            margin-bottom: 12px;
+            transition: border-color 0.3s;
+        }
+        
+        .datetime-input:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .btn-now {
+            flex: 1;
+            padding: 12px;
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-now:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-now.start {
+            background: #d4f5e0;
+            color: #2c6e3c;
+        }
+        
+        .btn-now.end {
+            background: #ffe5e5;
+            color: #c92a2a;
+        }
+        
+        /* Calculate Button */
+        .btn-calculate {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 10px 0 25px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-calculate:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Result Section */
+        .result-section {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 10px;
+        }
+        
+        .result-label {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .result-main {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: #1a1a1a;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        
+        .result-detail {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+        }
+        
+        .error-message {
+            color: #ff3b30;
+            background: #ffe5e5;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        /* Swap Button */
+        .swap-button {
+            display: flex;
+            justify-content: center;
+            margin: -10px 0 10px;
+        }
+        
+        .btn-swap {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-swap:active {
+            transform: scale(0.95);
+            background: #f0f0f0;
+        }
+        
+        /* Responsive Design for iPhone 17 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            .result-main {
+                font-size: 18px;
+                padding: 15px;
+            }
+        }
+        
+        @media (min-width: 393px) and (max-width: 430px) {
+            /* Optimized for iPhone 17 Pro sizes */
+            .container {
+                max-width: 100%;
+            }
+            
+            .datetime-input {
+                font-size: 17px;
+            }
+            
+            .btn-now, .btn-calculate {
+                font-size: 17px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+            
+            .container {
+                background: rgba(30, 30, 40, 0.95);
+            }
+            
+            h1, .card-title, .result-main {
+                color: #ffffff;
+            }
+            
+            .subtitle, .result-label, .result-detail {
+                color: #aaa;
+            }
+            
+            .datetime-card {
+                background: #252530;
+            }
+            
+            .datetime-input, .result-main, .result-detail {
+                background: #1c1c22;
+                color: #ffffff;
+                border-color: #3a3a44;
+            }
+            
+            .btn-now {
+                background: #2a2a35;
+                color: #ccc;
+            }
+            
+            .btn-now.start {
+                background: #1a3a2a;
+                color: #4cd964;
+            }
+            
+            .btn-now.end {
+                background: #3a1a1a;
+                color: #ff6b6b;
+            }
+            
+            .btn-swap {
+                background: #252530;
+                border-color: #3a3a44;
+                color: #ccc;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span>⏱️</span>
+            Time Duration
+            <span>📅</span>
+        </h1>
+        <div class="subtitle">Calculate duration between two dates & times</div>
+        
+        <!-- Start DateTime Card -->
+        <div class="datetime-card">
+            <div class="card-header">
+                <div class="card-title start">🟢 Start Date & Time</div>
+            </div>
+            <input type="datetime-local" id="startDateTime" class="datetime-input">
+            <div class="button-group">
+                <button class="btn-now start" onclick="setStartToNow()">📱 Set to Now</button>
+            </div>
+        </div>
+        
+        <!-- Swap Button -->
+        <div class="swap-button">
+            <button class="btn-swap" onclick="swapDateTime()">🔄 Swap Start & End</button>
+        </div>
+        
+        <!-- End DateTime Card -->
+        <div class="datetime-card">
+            <div class="card-header">
+                <div class="card-title end">🔴 End Date & Time</div>
+            </div>
+            <input type="datetime-local" id="endDateTime" class="datetime-input">
+            <div class="button-group">
+                <button class="btn-now end" onclick="setEndToNow()">📱 Set to Now</button>
+            </div>
+        </div>
+        
+        <!-- Calculate Button -->
+        <button class="btn-calculate" onclick="calculateDuration()">
+            ✨ Calculate Duration ✨
+        </button>
+        
+        <!-- Result Section -->
+        <div class="result-section">
+            <div class="result-label">⏰ DURATION RESULT ⏰</div>
+            <div class="result-main" id="resultMain">
+                Select dates & times
+            </div>
+            <div class="result-detail" id="resultDetail">
+                Click the button above to calculate
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Format datetime-local input value from Date object
+        function formatDateTimeLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+        
+        // Set start datetime to current time
+        function setStartToNow() {
+            const now = new Date();
+            document.getElementById('startDateTime').value = formatDateTimeLocal(now);
+            // Optional: Auto-calculate if both dates are set
+            autoCalculate();
+        }
+        
+        // Set end datetime to current time
+        function setEndToNow() {
+            const now = new Date();
+            document.getElementById('endDateTime').value = formatDateTimeLocal(now);
+            autoCalculate();
+        }
+        
+        // Swap start and end datetimes
+        function swapDateTime() {
+            const startInput = document.getElementById('startDateTime');
+            const endInput = document.getElementById('endDateTime');
+            
+            const startValue = startInput.value;
+            const endValue = endInput.value;
+            
+            if (startValue && endValue) {
+                startInput.value = endValue;
+                endInput.value = startValue;
+                calculateDuration();
+            } else if (startValue) {
+                endInput.value = startValue;
+                startInput.value = '';
+                calculateDuration();
+            } else if (endValue) {
+                startInput.value = endValue;
+                endInput.value = '';
+                calculateDuration();
+            }
+        }
+        
+        // Auto-calculate when both fields have values
+        function autoCalculate() {
+            const startValue = document.getElementById('startDateTime').value;
+            const endValue = document.getElementById('endDateTime').value;
+            
+            if (startValue && endValue) {
+                calculateDuration();
+            }
+        }
+        
+        // Main calculation function
+        function calculateDuration() {
+            const startValue = document.getElementById('startDateTime').value;
+            const endValue = document.getElementById('endDateTime').value;
+            
+            const resultMain = document.getElementById('resultMain');
+            const resultDetail = document.getElementById('resultDetail');
+            
+            // Check if both dates are selected
+            if (!startValue || !endValue) {
+                resultMain.innerHTML = '⚠️ Missing Date/Time ⚠️';
+                resultDetail.innerHTML = 'Please select both start and end date & time';
+                return;
+            }
+            
+            const start = new Date(startValue);
+            const end = new Date(endValue);
+            
+            // Validate dates
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                resultMain.innerHTML = '❌ Invalid Date ❌';
+                resultDetail.innerHTML = 'Please select valid dates and times';
+                return;
+            }
+            
+            // Check if end is before start
+            if (end < start) {
+                resultMain.innerHTML = '⚠️ End time is before Start time ⚠️';
+                resultDetail.innerHTML = 'Please ensure End date/time is after Start date/time';
+                return;
+            }
+            
+            // Calculate duration
+            const diffMs = end - start;
+            const diffSeconds = Math.floor(diffMs / 1000);
+            const diffMinutes = Math.floor(diffSeconds / 60);
+            const diffHours = Math.floor(diffMinutes / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            const diffWeeks = Math.floor(diffDays / 7);
+            const diffMonths = Math.floor(diffDays / 30.44); // Average month length
+            const diffYears = Math.floor(diffDays / 365.25);
+            
+            // Remainders
+            const remainingHours = diffHours % 24;
+            const remainingMinutes = diffMinutes % 60;
+            const remainingSeconds = diffSeconds % 60;
+            
+            // Build main result text
+            let mainResult = '';
+            
+            if (diffYears > 0) {
+                mainResult += `${diffYears} year${diffYears > 1 ? 's' : ''} `;
+                if (diffMonths % 12 > 0) {
+                    mainResult += `${diffMonths % 12} month${(diffMonths % 12) > 1 ? 's' : ''} `;
+                }
+            } else if (diffMonths > 0) {
+                mainResult += `${diffMonths} month${diffMonths > 1 ? 's' : ''} `;
+                if (diffDays % 30 > 0) {
+                    mainResult += `${diffDays % 30} day${(diffDays % 30) > 1 ? 's' : ''} `;
+                }
+            } else if (diffWeeks > 0) {
+                mainResult += `${diffWeeks} week${diffWeeks > 1 ? 's' : ''} `;
+                if (diffDays % 7 > 0) {
+                    mainResult += `${diffDays % 7} day${(diffDays % 7) > 1 ? 's' : ''} `;
+                }
+            } else if (diffDays > 0) {
+                mainResult += `${diffDays} day${diffDays > 1 ? 's' : ''} `;
+                if (remainingHours > 0) {
+                    mainResult += `${remainingHours} hour${remainingHours > 1 ? 's' : ''} `;
+                }
+            } else if (diffHours > 0) {
+                mainResult += `${diffHours} hour${diffHours > 1 ? 's' : ''} `;
+                if (remainingMinutes > 0) {
+                    mainResult += `${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''} `;
+                }
+            } else if (diffMinutes > 0) {
+                mainResult += `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} `;
+                if (remainingSeconds > 0) {
+                    mainResult += `${remainingSeconds} second${remainingSeconds > 1 ? 's' : ''}`;
+                }
+            } else {
+                mainResult += `${diffSeconds} second${diffSeconds !== 1 ? 's' : ''}`;
+            }
+            
+            // Detailed result with all units
+            const detailResult = `${diffDays} days, ${remainingHours} hours, ${remainingMinutes} minutes, ${remainingSeconds} seconds`;
+            
+            // Total hours and minutes
+            const totalHours = (diffMs / (1000 * 60 * 60)).toFixed(2);
+            const totalMinutes = (diffMs / (1000 * 60)).toFixed(0);
+            
+            resultMain.innerHTML = mainResult.trim();
+            resultDetail.innerHTML = `
+                📊 ${detailResult}<br>
+                🕐 Total: ${totalHours} hours (${parseInt(totalMinutes).toLocaleString()} minutes)
+            `;
+            
+            // Add subtle animation to result
+            resultMain.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                resultMain.style.transform = 'scale(1)';
+            }, 200);
+        }
+        
+        // Initialize with default values (start 1 hour ago, end now)
+        function initialize() {
+            const now = new Date();
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+            
+            document.getElementById('startDateTime').value = formatDateTimeLocal(oneHourAgo);
+            document.getElementById('endDateTime').value = formatDateTimeLocal(now);
+            
+            calculateDuration();
+        }
+        
+        // Auto-calculate when inputs change
+        document.addEventListener('DOMContentLoaded', () => {
+            initialize();
+            
+            const startInput = document.getElementById('startDateTime');
+            const endInput = document.getElementById('endDateTime');
+            
+            startInput.addEventListener('change', calculateDuration);
+            endInput.addEventListener('change', calculateDuration);
+        });
+    </script>
+</body>
+</html>
